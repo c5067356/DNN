@@ -1,0 +1,77 @@
+# ============================================================
+# config.yaml - Hyperparameters and Experiment Configuration
+# Module: Deep Neural Networks and Learning Systems (55-710365)
+# Assignment: Multimodal Sequence Modelling
+# ============================================================
+
+dataset:
+  name: StoryReasoning
+  hf_repo: "dioliveira/story-reasoning"          # HuggingFace dataset id
+  image_size: 224                                 # resize all images to this
+  max_text_len: 128                               # max tokens per caption
+  sequence_length: 3                              # K context frames
+  train_split: "train"
+  val_split: "validation"
+  test_split: "test"
+
+visual_encoder:
+  backbone: "resnet50"                            # torchvision model
+  pretrained: true
+  freeze_backbone: false
+  output_dim: 512
+
+text_encoder:
+  model: "lstm"                                   # lstm | transformer
+  vocab_size: 10000
+  embed_dim: 256
+  hidden_dim: 512
+  num_layers: 2
+  dropout: 0.3
+  output_dim: 512
+
+fusion:
+  strategy: "cross_modal_attention"              # concat | cross_modal_attention | tensor_fusion
+  fused_dim: 512
+
+sequence_model:
+  type: "bilstm"                                  # lstm | bilstm | gru
+  hidden_dim: 512
+  num_layers: 2
+  dropout: 0.3
+
+attention:
+  type: "temporal_self_attention"                 # dot | additive | temporal_self_attention
+  num_heads: 8
+
+image_decoder:
+  type: "conv_transpose"                          # conv_transpose | gan
+  output_channels: 3
+  output_size: 224
+
+text_decoder:
+  type: "lstm"
+  hidden_dim: 512
+  num_layers: 2
+  max_gen_len: 64
+
+training:
+  epochs: 30
+  batch_size: 8
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-5
+  scheduler: "cosine"
+  warmup_steps: 500
+  grad_clip: 1.0
+  image_loss_weight: 1.0
+  text_loss_weight: 1.0
+  seed: 42
+
+explainability:
+  method: "attention_rollout"                     # attention_rollout | grad_cam | integrated_gradients
+  num_samples: 10                                 # samples to visualise
+
+paths:
+  data_dir: "./data"
+  checkpoint_dir: "./checkpoints"
+  results_dir: "./results"
+  log_dir: "./logs"
